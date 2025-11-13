@@ -83,95 +83,74 @@ async def move_forward_ds(distance_to_object, velocity=360, acceleration=1000):
     motor_pair.stop(motor_pair.PAIR_1)
 
 
-async def gyro_turn_left_absolute(degrees, velocity = 100, acceleration = 360):
-    target = degrees * 10
-    
+async def gyro_turn_left_absolute(degrees, velocity = 360, acceleration = 180):
+    target = degrees * -10
+
     while True:
         current = motion_sensor.tilt_angles()[0]
-        
+
         # Handle 180/-180 wraparound for current reading
         if current > 1800:
             current -= 3600
         elif current < -1800:
             current += 3600
-            
+
         # Calculate the shortest angular difference
         diff = target - current
         if diff > 1800:
             diff -= 3600
         elif diff < -1800:
             diff += 3600
-            
+
         # Stop if we're close enough
         if abs(diff) <= 50:
             break
-            
+
         # Turn in the direction of the shortest path
         if diff > 0:
-            motor_pair.move(motor_pair.PAIR_1, -100, velocity=velocity, acceleration=acceleration)  # Turn left
+            motor_pair.move(motor_pair.PAIR_1, -100, velocity=velocity, acceleration=acceleration)# Turn left
         else:
-            motor_pair.move(motor_pair.PAIR_1, 100, velocity=velocity, acceleration=acceleration)   # Turn right
-            
+            motor_pair.move(motor_pair.PAIR_1, 100, velocity=velocity, acceleration=acceleration)# Turn right
+
         await runloop.sleep_ms(10)
-            
+
     motor_pair.stop(motor_pair.PAIR_1)
     await runloop.sleep_ms(50)
 
-async def gyro_turn_right_absolute(degrees, velocity = 100, acceleration = 360):
+async def gyro_turn_right_absolute(degrees, velocity = 360, acceleration = 180):
     target = degrees * 10
-    
+
     while True:
         current = motion_sensor.tilt_angles()[0]
-        
+
         # Handle 180/-180 wraparound for current reading
         if current > 1800:
             current -= 3600
         elif current < -1800:
             current += 3600
-            
+
         # Calculate the shortest angular difference
         diff = target - current
         if diff > 1800:
             diff -= 3600
         elif diff < -1800:
             diff += 3600
-            
+
         # Stop if we're close enough
         if abs(diff) <= 50:
             break
-            
+
         # Turn in the direction of the shortest path
         if diff > 0:
-            motor_pair.move(motor_pair.PAIR_1, -100, velocity=velocity, acceleration=acceleration)  # Turn left
+            motor_pair.move(motor_pair.PAIR_1, -100, velocity=velocity, acceleration=acceleration)# Turn left
         else:
-            motor_pair.move(motor_pair.PAIR_1, 100, velocity=velocity, acceleration=acceleration)   # Turn right
-            
+            motor_pair.move(motor_pair.PAIR_1, 100, velocity=velocity, acceleration=acceleration)# Turn right
+
         await runloop.sleep_ms(10)
-            
+
     motor_pair.stop(motor_pair.PAIR_1)
     await runloop.sleep_ms(50)
 
-# This function makes an accurate left turn
-async def gyro_turn_left(degrees, velocity = 100, acceleration = 360):
-    motion_sensor.reset_yaw(0)
-    #await runloop.until(motion_sensor.stable)
-
-    while motion_sensor.tilt_angles()[0] < degrees*10:
-        motor_pair.move(motor_pair.PAIR_1, -100, velocity=velocity, acceleration=acceleration)
-
-    motor_pair.stop(motor_pair.PAIR_1)
-    await runloop.sleep_ms(50)# Small delay for smoother control
-
-# This function makes an accurate right turn
-async def gyro_turn_right(degrees, velocity = 100, acceleration = 360):
-    motion_sensor.reset_yaw(0)
-    #await runloop.until(motion_sensor.stable)
-
-    while motion_sensor.tilt_angles()[0] > degrees*-10:
-        motor_pair.move(motor_pair.PAIR_1, 100, velocity=velocity, acceleration=acceleration)
-
-    motor_pair.stop(motor_pair.PAIR_1)
-    await runloop.sleep_ms(50)# Small delay for smoother control
 
 
 # This function tells the code which ports are connected to which sensors / motors
@@ -190,7 +169,7 @@ async def mission_a():
     hub.light_matrix.write(mission_name[current_mission])
     # Add all code for Mission 1 here
 
-    await move_forward_ds(20, 1000, 1000)
+    await gyro_turn_left_absolute(90, 360, 180)
     
 
 
@@ -210,8 +189,7 @@ async def mission_b():
 async def mission_c():
 
     hub.light_matrix.write(mission_name[current_mission])
-    # Add code for a combined mission
-    #await move_forward_ds(19, 1100, 1200)
+
     await move_forward_cm(78, 1000, 1000)
     await runloop.sleep_ms(100)
     await gyro_turn_left_absolute(-55, 150)
@@ -245,23 +223,6 @@ async def mission_c():
     #await move_forward_ds(30, 1000)
 
 
-    #await move_forward_cm(18, 1000, 1000)
-    #await runloop.sleep_ms(200)
-    #await move_forward_cm(-10)
-    #await gyro_turn_left_absolute(-90, 150)
-    #await move_forward_cm(200)
-    #await runloop.sleep_ms(20)
-    #await gyro_turn_left_absolute(-179, 150)
-    
-    #await move_forward_cm(-12)
-
-    #await gyro_turn_left(15, 500, 100)
-
-    #await move_forward_ds(20, 1100, 1200)
-
-    #await move_forward_cm(4)
-    #await move_forward_cm(-7)
-
     
     await runloop.sleep_ms(1000)
 
@@ -289,11 +250,14 @@ async def menu():
         # Right button for next mission
         if button.pressed(button.RIGHT):
             current_mission = (current_mission + 1) % len(missions)
+            motion_sensor.reset_yaw(0)
+
 
         # Left button select and continue
         if button.pressed(button.LEFT):
             hub.light_matrix.write('OK')
-            await runloop.sleep_ms(1000)
+            await runloop.until(motion_sensor.stable)
+            await runloop.sleep_ms(100)
             await missions[current_mission]()
 
 
