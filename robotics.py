@@ -28,7 +28,7 @@ async def move_attachment_2(degrees, velocity=360, acceleration=10000):
     await motor.run_for_degrees(ATTACHMENT_2_PORT, degrees, velocity, acceleration=acceleration)
 
 # Move forward by distance
-async def move_forward_cm(distance_cm, velocity=360, acceleration=1000):
+async def move_forward_cm(distance_cm, velocity=600, acceleration=1000):
     wheel_circumference = math.pi*WHEEL_DIAMETER_CM
     degrees_to_move = int(distance_cm/wheel_circumference*360)
     await motor_pair.move_for_degrees(motor_pair.PAIR_1, degrees_to_move, 0, velocity=velocity, acceleration=acceleration)
@@ -46,18 +46,8 @@ async def move_forward_fs(velocity=360, acceleration=1000):
             break
     motor_pair.stop(motor_pair.PAIR_1)
 
-# Move forward using distance sensor - distance is in cm
-#async def move_forward_ds(distance_to_object, velocity=360, acceleration=1000):
-#    while True:
-#        if distance_sensor.distance(DISTANCE_SENSOR_PORT) > distance_to_object*10 or distance_sensor.distance(DISTANCE_SENSOR_PORT)==-1:
-#            motor_pair.move(motor_pair.PAIR_1, 0, velocity=velocity, acceleration=acceleration)
-#        else:
-#            motor_pair.stop(motor_pair.PAIR_1, stop=motor.COAST)
-#            break
-#    motor_pair.stop(motor_pair.PAIR_1)
 
-
-async def move_forward_ds(distance_to_object, velocity=360, acceleration=1000):
+async def move_forward_ds(distance_to_object, velocity=500, acceleration=1000):
     min_velocity = 100# Minimum velocity to keep moving
 
     while True:
@@ -83,7 +73,7 @@ async def move_forward_ds(distance_to_object, velocity=360, acceleration=1000):
     motor_pair.stop(motor_pair.PAIR_1)
 
 
-async def gyro_turn_absolute(degrees, velocity = 360, acceleration = 180):
+async def gyro_turn_absolute(degrees, velocity = 500, acceleration = 180):
     target = degrees * -10
 
     while True:
@@ -134,30 +124,39 @@ async def mission_a():
     hub.light_matrix.write(mission_name[current_mission])
     # Add all code for Mission 1 here
 
+    # Move to Mission 8: Silo
     await move_forward_cm(60, 1000, 1000)
-    await gyro_turn_absolute(90)
+    await gyro_turn_absolute(90, 300)
     await move_forward_cm(-5)
     await runloop.sleep_ms(10)
-    await move_forward_ds(13, 200, 500)
+    await move_forward_ds(13, 180, 360)
     await runloop.sleep_ms(100)
 
+    # Do Mission 8: Silo
     for i in range(4):
         await move_attachment_1(140, 1000, 10000)
         await runloop.sleep_ms(50)
         await move_attachment_1(-140, 1000, 10000)
         await runloop.sleep_ms(50)
-
     await move_attachment_1(-30, 1000, 10000)
+
+    # Move to Mission 6: Forge
     await gyro_turn_absolute(10)
-    await move_forward_cm(18)
+    await move_forward_cm(17)
+
+    # Do Mission 6: Forge
     await gyro_turn_absolute(-55, 150)
     await runloop.sleep_ms(50)
 
+    # Move to Mission 5: Who Lived Here?
     await move_forward_cm(3)
-    #await runloop.sleep_ms(100)
     await gyro_turn_absolute(-88)
+
+    # Do Mission 5: Who Lived Here?
     await move_forward_cm(3)
     await runloop.sleep_ms(100)
+
+    # Move to Mission 10: Tip the Scales
     await move_forward_cm(-10)
     await gyro_turn_absolute(-135)
     await move_forward_cm(17)
@@ -169,33 +168,31 @@ async def mission_a():
     await gyro_turn_absolute(-170)
     await move_forward_cm(-5)
     await runloop.sleep_ms(100)
+
+    # Do Mission 10: Tip the Scales
     await move_attachment_1(120)
     await runloop.sleep_ms(100)
     await move_forward_cm(-4)
     await runloop.sleep_ms(200)
     await move_attachment_1(-160)
     await runloop.sleep_ms(200)
-    await runloop.sleep_ms(200)
+
+    # Move to Mission 9: What's on Sale
     await gyro_turn_absolute(135)
     await runloop.sleep_ms(200)
-    await move_forward_cm(26, 360, 360)
+
+    # Do Mission 9: What's on Sale
+    await move_forward_cm(26, 500, 360)
     await runloop.sleep_ms(200)
+
+    # Move to Red Base
     await move_forward_cm(-50, 1000, 1000)
-    await runloop.sleep_ms(200)
     await move_forward_cm(13)
     await gyro_turn_absolute(-160)
-    await runloop.sleep_ms(200)
     await move_forward_cm(60, 1000, 1000)
-    await runloop.sleep_ms(200)
     await gyro_turn_absolute(-100)
-    await runloop.sleep_ms(200)
     await move_forward_cm(90, 1000, 1000)
-    #await gyro_turn_absolute(-180)
-    #await move_forward_cm(26, 1000, 1000)
-    #await runloop.sleep_ms(200)
-    #await gyro_turn_absolute(-100)
-    #await move_forward_cm(90, 1000, 1000)
-    #await move_forward_ds(30, 1000)
+
 
 
 
