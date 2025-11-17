@@ -185,7 +185,7 @@ async def mission_a():
     await move_forward_cm(26, 500, 360)
     await runloop.sleep_ms(200)
 
-    # Move to Red Base
+    # Return to Red Base
     await move_forward_cm(-50, 1000, 1000)
     await move_forward_cm(13)
     await gyro_turn_absolute(-160)
@@ -202,53 +202,22 @@ async def mission_a():
 async def mission_b():
     hub.light_matrix.write(mission_name[current_mission])
     # Add all code for Mission 2 here
-    
-    await move_forward_cm(60, 1000, 1000)
-    await gyro_turn_absolute(90)
-    await move_forward_cm(-5)
-    await runloop.sleep_ms(10)
-    await move_forward_ds(13, 200, 500)
+
+    # Move to Mission 2: Map Reveal
+    await move_forward_ds(15)
+
+    # Do Mission 2: Map Reveal
+    await gyro_turn_absolute(-175)
     await runloop.sleep_ms(100)
+    await gyro_turn_absolute(160)
+    await move_forward_cm(20)
 
-    for i in range(4):
-        await move_attachment_1(120, 1000, 10000)
-        await runloop.sleep_ms(50)
-        await move_attachment_1(-120, 1000, 10000)
-        await runloop.sleep_ms(50)
-
-    await gyro_turn_absolute(10)
-    await move_forward_cm(18)
-    await gyro_turn_absolute(-55, 150)
-    await runloop.sleep_ms(50)
-
-    await move_forward_cm(3)
-    #await runloop.sleep_ms(100)
-    await gyro_turn_absolute(-88)
-    await move_forward_cm(3)
-    await runloop.sleep_ms(100)
-    await move_forward_cm(-10)
-    await gyro_turn_absolute(-135)
-    await move_forward_cm(17)
-    await runloop.sleep_ms(50)
-    await gyro_turn_absolute(-45)
-    await move_forward_cm(15)
-    await gyro_turn_absolute(-90)
-    await move_forward_cm(24)
+    # Return to Red Base
     await gyro_turn_absolute(-170)
-    await move_forward_cm(-5)
     await runloop.sleep_ms(100)
-    await move_attachment_1(120)
-    await runloop.sleep_ms(100)
-    await move_attachment_1(-120)
-    await runloop.sleep_ms(100)
-    await gyro_turn_absolute(-135)
-    await move_forward_cm(33, 1000, 1000)
-    await gyro_turn_absolute(-180)
-    await move_forward_cm(26, 1000, 1000)
-    #await runloop.sleep_ms(200)
-    await gyro_turn_absolute(-100)
-    await move_forward_cm(90, 1000, 1000)
-    #await move_forward_ds(30, 1000)
+    await move_forward_ds(10)
+
+
 
 
 async def mission_c():
