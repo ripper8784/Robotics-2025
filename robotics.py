@@ -20,12 +20,12 @@ RIGHT_MOTOR_PORT=port.F
 WHEEL_DIAMETER_CM=5.6
 
 # Move attachment 1 by degree
-async def move_attachment_1(degrees, velocity=360):
-    await motor.run_for_degrees(ATTACHMENT_1_PORT, degrees, velocity)
+async def move_attachment_1(degrees, velocity=360, acceleration=10000):
+    await motor.run_for_degrees(ATTACHMENT_1_PORT, degrees, velocity, acceleration = acceleration)
 
 # Move attachment 2 by degree
-async def move_attachment_2(degrees, velocity=360):
-    await motor.run_for_degrees(ATTACHMENT_2_PORT, degrees, velocity)
+async def move_attachment_2(degrees, velocity=360, acceleration=10000):
+    await motor.run_for_degrees(ATTACHMENT_2_PORT, degrees, velocity, acceleration=acceleration)
 
 # Move forward by distance
 async def move_forward_cm(distance_cm, velocity=360, acceleration=1000):
@@ -112,7 +112,7 @@ async def gyro_turn_absolute(degrees, velocity = 360, acceleration = 180):
         else:
             motor_pair.move(motor_pair.PAIR_1, 100, velocity=velocity, acceleration=acceleration)# Turn right
 
-        await runloop.sleep_ms(10)
+        await runloop.sleep_ms(5)
 
     motor_pair.stop(motor_pair.PAIR_1)
     await runloop.sleep_ms(10)
@@ -134,15 +134,73 @@ async def mission_a():
     hub.light_matrix.write(mission_name[current_mission])
     # Add all code for Mission 1 here
 
-    await gyro_turn_absolute(-135)
-    await runloop.sleep_ms(1000)
-    await gyro_turn_absolute(-45)
-    await runloop.sleep_ms(1000)
+    await move_forward_cm(60, 1000, 1000)
     await gyro_turn_absolute(90)
-    await runloop.sleep_ms(1000)
-    await gyro_turn_absolute(-180)
+    await move_forward_cm(-5)
+    await runloop.sleep_ms(10)
+    await move_forward_ds(13, 200, 500)
+    await runloop.sleep_ms(100)
 
-    await runloop.sleep_ms(1000)
+    for i in range(4):
+        await move_attachment_1(140, 1000, 10000)
+        await runloop.sleep_ms(50)
+        await move_attachment_1(-140, 1000, 10000)
+        await runloop.sleep_ms(50)
+
+    await move_attachment_1(-30, 1000, 10000)
+    await gyro_turn_absolute(10)
+    await move_forward_cm(18)
+    await gyro_turn_absolute(-55, 150)
+    await runloop.sleep_ms(50)
+
+    await move_forward_cm(3)
+    #await runloop.sleep_ms(100)
+    await gyro_turn_absolute(-88)
+    await move_forward_cm(3)
+    await runloop.sleep_ms(100)
+    await move_forward_cm(-10)
+    await gyro_turn_absolute(-135)
+    await move_forward_cm(17)
+    await runloop.sleep_ms(50)
+    await gyro_turn_absolute(-45)
+    await move_forward_cm(15)
+    await gyro_turn_absolute(-90)
+    await move_forward_cm(24)
+    await gyro_turn_absolute(-170)
+    await move_forward_cm(-5)
+    await runloop.sleep_ms(100)
+    await move_attachment_1(120)
+    await runloop.sleep_ms(100)
+    await move_forward_cm(-4)
+    await runloop.sleep_ms(200)
+    await move_attachment_1(-160)
+    await runloop.sleep_ms(200)
+    await runloop.sleep_ms(200)
+    await gyro_turn_absolute(135)
+    await runloop.sleep_ms(200)
+    await move_forward_cm(26, 360, 360)
+    await runloop.sleep_ms(200)
+    await move_forward_cm(-50, 1000, 1000)
+    await runloop.sleep_ms(200)
+    await move_forward_cm(13)
+    await gyro_turn_absolute(-160)
+    await runloop.sleep_ms(200)
+    await move_forward_cm(60, 1000, 1000)
+    await runloop.sleep_ms(200)
+    await gyro_turn_absolute(-100)
+    await runloop.sleep_ms(200)
+    await move_forward_cm(90, 1000, 1000)
+    #await gyro_turn_absolute(-180)
+    #await move_forward_cm(26, 1000, 1000)
+    #await runloop.sleep_ms(200)
+    #await gyro_turn_absolute(-100)
+    #await move_forward_cm(90, 1000, 1000)
+    #await move_forward_ds(30, 1000)
+
+
+
+    
+
 
 async def mission_b():
     hub.light_matrix.write(mission_name[current_mission])
@@ -152,17 +210,48 @@ async def mission_b():
     await gyro_turn_absolute(90)
     await move_forward_cm(-5)
     await runloop.sleep_ms(10)
-    await move_forward_ds(13)
-    await runloop.sleep_ms(10)
+    await move_forward_ds(13, 200, 500)
+    await runloop.sleep_ms(100)
 
-    
-    for i in range(5):
-        await move_attachment_1(90)
-        await runloop.sleep_ms(10)
-        await move_attachment_1(-90)
-        await runloop.sleep_ms(10)
+    for i in range(4):
+        await move_attachment_1(120, 1000, 10000)
+        await runloop.sleep_ms(50)
+        await move_attachment_1(-120, 1000, 10000)
+        await runloop.sleep_ms(50)
 
+    await gyro_turn_absolute(10)
+    await move_forward_cm(18)
+    await gyro_turn_absolute(-55, 150)
+    await runloop.sleep_ms(50)
 
+    await move_forward_cm(3)
+    #await runloop.sleep_ms(100)
+    await gyro_turn_absolute(-88)
+    await move_forward_cm(3)
+    await runloop.sleep_ms(100)
+    await move_forward_cm(-10)
+    await gyro_turn_absolute(-135)
+    await move_forward_cm(17)
+    await runloop.sleep_ms(50)
+    await gyro_turn_absolute(-45)
+    await move_forward_cm(15)
+    await gyro_turn_absolute(-90)
+    await move_forward_cm(24)
+    await gyro_turn_absolute(-170)
+    await move_forward_cm(-5)
+    await runloop.sleep_ms(100)
+    await move_attachment_1(120)
+    await runloop.sleep_ms(100)
+    await move_attachment_1(-120)
+    await runloop.sleep_ms(100)
+    await gyro_turn_absolute(-135)
+    await move_forward_cm(33, 1000, 1000)
+    await gyro_turn_absolute(-180)
+    await move_forward_cm(26, 1000, 1000)
+    #await runloop.sleep_ms(200)
+    await gyro_turn_absolute(-100)
+    await move_forward_cm(90, 1000, 1000)
+    #await move_forward_ds(30, 1000)
 
 
 async def mission_c():
