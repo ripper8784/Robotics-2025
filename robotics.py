@@ -120,29 +120,35 @@ def config_ports():
 
 ################ MISSION CODE HERE #######################
 
+# This mission is launched first from the blue area
 async def mission_a():
     hub.light_matrix.write(mission_name[current_mission])
     # Add all code for Mission 1 here
 
     # Move to Mission 8: Silo
-    await move_forward_cm(60, 1000, 1000)
-    await gyro_turn_absolute(90, 300)
-    await move_forward_cm(-5)
+    await move_forward_cm(59, 1000, 1000)
+    await gyro_turn_absolute(90, 150)
+    await move_forward_cm(10, 300, 300)
     await runloop.sleep_ms(10)
-    await move_forward_ds(13, 180, 360)
-    await runloop.sleep_ms(100)
+    await move_forward_cm(-10.5, 300, 300)
+    await runloop.sleep_ms(10)
+    #await move_forward_ds(13, 100, 100)
+    #await runloop.sleep_ms(100)
+
+    await move_attachment_1(300, 20000, 30000)
+    await move_attachment_1(-180, 20000, 30000)
+    await runloop.sleep_ms(50)
 
     # Do Mission 8: Silo
     for i in range(4):
-        await move_attachment_1(140, 1000, 10000)
+        await move_attachment_1(180, 20000, 30000)
+        await move_attachment_1(-180, 20000, 30000)
         await runloop.sleep_ms(50)
-        await move_attachment_1(-140, 1000, 10000)
-        await runloop.sleep_ms(50)
-    await move_attachment_1(-30, 1000, 10000)
+    await move_attachment_1(-120, 1000, 10000)
 
     # Move to Mission 6: Forge
     await gyro_turn_absolute(10)
-    await move_forward_cm(17)
+    await move_forward_cm(19)
 
     # Do Mission 6: Forge
     await gyro_turn_absolute(-55, 150)
@@ -170,11 +176,11 @@ async def mission_a():
     await runloop.sleep_ms(100)
 
     # Do Mission 10: Tip the Scales
-    await move_attachment_1(120)
+    await move_attachment_1(250)
     await runloop.sleep_ms(100)
     await move_forward_cm(-4)
     await runloop.sleep_ms(200)
-    await move_attachment_1(-160)
+    await move_attachment_1(-250)
     await runloop.sleep_ms(200)
 
     # Move to Mission 9: What's on Sale
@@ -186,6 +192,8 @@ async def mission_a():
     await runloop.sleep_ms(200)
 
     # Return to Red Base
+    await gyro_turn_absolute(130)
+    await runloop.sleep_ms(200)
     await move_forward_cm(-50, 1000, 1000)
     await move_forward_cm(13)
     await gyro_turn_absolute(-160)
@@ -196,9 +204,7 @@ async def mission_a():
 
 
 
-    
-
-
+# This mission is launched second from the red area
 async def mission_b():
     hub.light_matrix.write(mission_name[current_mission])
     # Add all code for Mission 2 here
@@ -224,47 +230,58 @@ async def mission_c():
 
     hub.light_matrix.write(mission_name[current_mission])
 
-    await move_forward_cm(78, 1000, 1000)
+    await move_forward_cm(60, 750, 750)
+    await move_forward_ds(35, 150)
+
+
+
     await runloop.sleep_ms(100)
-    await gyro_turn_absolute(-55, 150)
-    await move_forward_cm(5)
-    #await runloop.sleep_ms(100)
-    await gyro_turn_absolute(-88)
-    await move_forward_cm(3)
-    await runloop.sleep_ms(100)
-    await move_forward_cm(-10)
-    await gyro_turn_absolute(-135)
-    await move_forward_cm(17)
-    #await runloop.sleep_ms(100)
-    await gyro_turn_absolute(-45)
-    await move_forward_cm(15)
+    await gyro_turn_absolute(-50, 150)
+    await move_forward_cm(30)
+    
     await gyro_turn_absolute(-90)
-    await move_forward_cm(24)
-    await gyro_turn_absolute(-170)
-    await move_forward_cm(-5)
     await runloop.sleep_ms(100)
-    await move_attachment_1(90)
+    await move_forward_cm(15)
+
+    await move_forward_cm(-3)
+    
     await runloop.sleep_ms(100)
-    await move_attachment_1(-90)
-    await runloop.sleep_ms(100)
-    await gyro_turn_absolute(-135)
-    await move_forward_cm(33, 1000)
-    await gyro_turn_absolute(-180)
-    await move_forward_cm(26, 1000)
-    #await runloop.sleep_ms(200)
-    await gyro_turn_absolute(-100)
-    await move_forward_cm(90, 1000)
-    #await move_forward_ds(30, 1000)
+    await gyro_turn_absolute(-175)
+    await move_forward_cm(78)
+
+  
 
 
     
     await runloop.sleep_ms(1000)
 
 async def mission_d():
-    hub.light_matrix.write(mission_name[current_mission])
-    # Add code for a combined mission
-    
-    
+    hub.light_matrix.write(mission_name[current_mission])                    
+    await move_forward_cm(70, 1000, 1000)
+    await move_forward_ds(30, 250)
+    await runloop.sleep_ms(100)
+    await gyro_turn_absolute(90, 150)
+    await move_forward_cm(35)
+    await gyro_turn_absolute(0, 150)
+    await move_forward_cm(-5)
+    await runloop.sleep_ms(100)
+    await move_attachment_1(270)   #move arm down
+    await move_forward_cm(12, 200, 200)
+    await move_attachment_1(-20, 100)
+    await move_forward_cm(-2, 100, 100)
+    await runloop.sleep_ms(100)
+
+    await move_attachment_1(-45, 100)
+    await move_forward_cm(-1, 100, 100)
+    await move_attachment_1(-30, 100)
+    await move_forward_cm(-1, 100, 100)
+    await move_attachment_1(-30, 100)
+    await move_forward_cm(5, 100, 100)
+    await move_attachment_1(-20, 100)
+    await move_forward_cm(3, 100, 100)
+    await runloop.sleep_ms(1000)
+
+
 
     await runloop.sleep_ms(1000)
 
