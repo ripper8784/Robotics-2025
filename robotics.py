@@ -65,7 +65,32 @@ async def move_forward_ds(distance_to_object, velocity=500, acceleration=1000):
             motor_pair.move(motor_pair.PAIR_1, 0, velocity=proportional_velocity, acceleration=acceleration)
         else:
             # We've reached the target distance
-            motor_pair.stop(motor_pair.PAIR_1, stop=motor.COAST)
+            motor_pair.stop(motor_pair.PAIR_1, stop=motor.BRAKE)
+            break
+
+        await runloop.sleep_ms(50)# Small delay for smoother control
+
+    motor_pair.stop(motor_pair.PAIR_1)
+
+async def move_backward_ds(distance_to_object, velocity=500, acceleration=1000):
+    min_velocity = 100# Minimum velocity to keep moving
+
+    while True:
+        current_distance = distance_sensor.distance(DISTANCE_SENSOR_PORT)
+
+        # If sensor can't read or distance is much less than target, move at full speed backward
+        if current_distance == -1 or current_distance < (distance_to_object - 20) * 10:
+            motor_pair.move(motor_pair.PAIR_1, 0, velocity=-velocity, acceleration=acceleration)
+        # If we're close to target, slow down proportionally
+        elif current_distance < distance_to_object * 10:
+            # Calculate proportional velocity based on distance remaining
+            distance_remaining = (distance_to_object * 10) - current_distance
+            # Scale velocity: closer to target = slower speed
+            proportional_velocity = max(min_velocity, int(velocity * distance_remaining / 200))
+            motor_pair.move(motor_pair.PAIR_1, 0, velocity=-proportional_velocity, acceleration=acceleration)
+        else:
+            # We've reached the target distance
+            motor_pair.stop(motor_pair.PAIR_1, stop=motor.BRAKE)
             break
 
         await runloop.sleep_ms(50)# Small delay for smoother control
@@ -126,36 +151,38 @@ async def mission_a():
     # Add all code for Mission 1 here
 
     # Move to Mission 8: Silo
-    await move_forward_cm(59, 1000, 1000)
+    await move_forward_cm(63, 1000, 1000)
     await gyro_turn_absolute(90, 150)
     await move_forward_cm(10, 300, 300)
     await runloop.sleep_ms(10)
-    await move_forward_cm(-10.5, 300, 300)
+    await move_forward_cm(-10.5, 200, 200)
     await runloop.sleep_ms(10)
     #await move_forward_ds(13, 100, 100)
     #await runloop.sleep_ms(100)
 
-    await move_attachment_1(300, 20000, 30000)
-    await move_attachment_1(-180, 20000, 30000)
+    await move_attachment_2(-200, 20000, 30000)
+    await move_attachment_2(100, 20000, 30000)
     await runloop.sleep_ms(50)
 
     # Do Mission 8: Silo
     for i in range(4):
-        await move_attachment_1(180, 20000, 30000)
-        await move_attachment_1(-180, 20000, 30000)
+        await move_attachment_2(-180, 1000, 30000)
         await runloop.sleep_ms(50)
-    await move_attachment_1(-120, 1000, 10000)
+        await move_attachment_2(180, 1000, 30000)
+        await runloop.sleep_ms(50)
+    await move_attachment_2(100, 1000, 10000)
 
     # Move to Mission 6: Forge
+    await move_forward_cm(1, 100, 100)
     await gyro_turn_absolute(10)
-    await move_forward_cm(19)
+    await move_forward_cm(11)
 
     # Do Mission 6: Forge
     await gyro_turn_absolute(-55, 150)
     await runloop.sleep_ms(50)
 
     # Move to Mission 5: Who Lived Here?
-    await move_forward_cm(3)
+    await move_forward_cm(6)
     await gyro_turn_absolute(-88)
 
     # Do Mission 5: Who Lived Here?
@@ -168,27 +195,27 @@ async def mission_a():
     await move_forward_cm(17)
     await runloop.sleep_ms(50)
     await gyro_turn_absolute(-45)
-    await move_forward_cm(15)
+    await move_forward_cm(16)
     await gyro_turn_absolute(-90)
-    await move_forward_cm(24)
+    await move_forward_cm(23)
     await gyro_turn_absolute(-170)
     await move_forward_cm(-5)
     await runloop.sleep_ms(100)
 
     # Do Mission 10: Tip the Scales
-    await move_attachment_1(250)
+    await move_attachment_2(-200)
     await runloop.sleep_ms(100)
-    await move_forward_cm(-4)
+    await move_forward_cm(-5)
     await runloop.sleep_ms(200)
-    await move_attachment_1(-250)
+    await move_attachment_2(200)
     await runloop.sleep_ms(200)
 
     # Move to Mission 9: What's on Sale
-    await gyro_turn_absolute(135)
+    await gyro_turn_absolute(137, 250)
     await runloop.sleep_ms(200)
 
     # Do Mission 9: What's on Sale
-    await move_forward_cm(26, 500, 360)
+    await move_forward_cm(28, 600, 500)
     await runloop.sleep_ms(200)
 
     # Return to Red Base
@@ -207,88 +234,123 @@ async def mission_a():
 # This mission is launched second from the red area
 async def mission_b():
     hub.light_matrix.write(mission_name[current_mission])
-    # Add all code for Mission 2 here
+    # Add all code for Mission B here
 
-    # Move to Mission 2: Map Reveal
-    await move_forward_ds(15)
+
+    await move_attachment_2(180)
+    await move_forward_cm(33)
+    await move_attachment_2(-180)
+    await move_forward_cm(-12, 100)
+    await move_attachment_2(180)
+    await gyro_turn_absolute(-90)
+    await move_forward_cm(15, 200)
+    await gyro_turn_absolute(3, 200)
+    await move_forward_cm(35)
+    await runloop.sleep_ms(500)
+    await gyro_turn_absolute(-3)
+    await move_forward_cm(-60, 1000, 1000)
+
+
+
+
+    return
+
+    # Move to Mission 1: Surface Brushing
+    await move_forward_cm(52, 300, 300)
+    await runloop.sleep_ms(50)
+    await move_forward_cm(20)
+    await gyro_turn_absolute(0, 50, 50)
+    await runloop.sleep_ms(100)
+    await move_forward_cm(-10, 100, 100)
+    await move_forward_cm(-50, 1000, 1000)
 
     # Do Mission 2: Map Reveal
-    await gyro_turn_absolute(-175)
-    await runloop.sleep_ms(100)
-    await gyro_turn_absolute(160)
-    await move_forward_cm(20)
-
-    # Return to Red Base
-    await gyro_turn_absolute(-170)
-    await runloop.sleep_ms(100)
-    await move_forward_ds(10)
-
 
 
 
 async def mission_c():
+    hub.light_matrix.write(mission_name[current_mission]) 
+
+    # Move to Mission 3: Mineshaft Explorer                   
+    await move_attachment_2(100, 100)
+    await move_forward_cm(65, 500, 500)
+    await move_forward_ds(27, 200)
+    await runloop.sleep_ms(50)
+    await gyro_turn_absolute(90, 150)
+    await move_forward_cm(33, 400)
+    await gyro_turn_absolute(0, 150) 
+    await move_forward_cm(10, 200, 200)
+    await move_forward_cm(-19, 200, 200)
+    await runloop.sleep_ms(200)
+    await gyro_turn_absolute(10, 50, 100)
+    await move_attachment_2(-180)
+
+    await move_forward_cm(11, 100)
+    await runloop.sleep_ms(200)
+    await gyro_turn_absolute(10, 50, 100)
+
+    # Do Mission 3: Mineshaft Explorer
+    await runloop.run_in_parallel(
+        move_attachment_2(180, 500),
+        move_forward_cm(-1, 100, 100)
+    )
+
+
+    # Move to Mission 02: Map Reveal
+    await move_attachment_2(180, 500)
+    await gyro_turn_absolute(-90)
+    await move_forward_cm(17)
+    await gyro_turn_absolute(-100, 100, 100)
+    await move_forward_cm(15)
+    await move_forward_ds(7, 100, 100)
+    await runloop.sleep_ms(50)
+
+    # Do Mission 02: Map Reveal
+    await gyro_turn_absolute(-50)
+    await move_forward_cm(25)
+
+    # Return to Red Base
+    await gyro_turn_absolute(-110, 1000, 1000)
+    await runloop.sleep_ms(500)
+    await gyro_turn_absolute(-90)
+    await move_forward_cm(17)
+    await gyro_turn_absolute(-165)
+    await move_forward_cm(80, 1000, 1000)
+
+
+
+
+    await runloop.sleep_ms(1000)
+
+
+
+
+async def mission_d():
 
     hub.light_matrix.write(mission_name[current_mission])
 
-    await move_forward_cm(60, 750, 750)
-    await move_forward_ds(35, 150)
+    await move_forward_cm(-75, 1000, 1000)
+    await move_forward_cm(75, 1000, 1000)
 
-
-
-    await runloop.sleep_ms(100)
-    await gyro_turn_absolute(-50, 150)
-    await move_forward_cm(30)
-    
-    await gyro_turn_absolute(-90)
-    await runloop.sleep_ms(100)
-    await move_forward_cm(15)
-
-    await move_forward_cm(-3)
-    
-    await runloop.sleep_ms(100)
-    await gyro_turn_absolute(-175)
-    await move_forward_cm(78)
-
-  
-
-
-    
     await runloop.sleep_ms(1000)
 
-async def mission_d():
-    hub.light_matrix.write(mission_name[current_mission])                    
-    await move_forward_cm(70, 1000, 1000)
-    await move_forward_ds(30, 250)
-    await runloop.sleep_ms(100)
-    await gyro_turn_absolute(90, 150)
-    await move_forward_cm(35)
-    await gyro_turn_absolute(0, 150)
-    await move_forward_cm(-5)
-    await runloop.sleep_ms(100)
-    await move_attachment_1(270)   #move arm down
-    await move_forward_cm(12, 200, 200)
-    await move_attachment_1(-20, 100)
-    await move_forward_cm(-2, 100, 100)
-    await runloop.sleep_ms(100)
 
-    await move_attachment_1(-45, 100)
-    await move_forward_cm(-1, 100, 100)
-    await move_attachment_1(-30, 100)
-    await move_forward_cm(-1, 100, 100)
-    await move_attachment_1(-30, 100)
-    await move_forward_cm(5, 100, 100)
-    await move_attachment_1(-20, 100)
-    await move_forward_cm(3, 100, 100)
+
+async def mission_e():
+
+    hub.light_matrix.write(mission_name[current_mission])
+
+    await move_attachment_1(180)
     await runloop.sleep_ms(1000)
-
+    await move_attachment_1(-180)
 
 
     await runloop.sleep_ms(1000)
 
 
 current_mission = 0
-missions =     [mission_a, mission_b, mission_c,mission_d]
-mission_name = ["A",       "B",       "C",      "D"]
+missions =     [mission_a, mission_b, mission_c,mission_d,mission_e]
+mission_name = ["A",       "B",       "C",      "D",      "E"]
 
 async def menu():
     global current_mission
