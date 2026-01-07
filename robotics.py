@@ -151,21 +151,24 @@ async def mission_a():
     # Add all code for Mission 1 here
 
     # Move to Mission 8: Silo
-    await move_forward_cm(63, 1000, 1000)
+    runloop.run(
+        move_attachment_2(100, 100),
+        move_forward_cm(63, 700, 500)
+    )
     await gyro_turn_absolute(90, 150)
     await move_forward_cm(10, 300, 300)
     await runloop.sleep_ms(10)
-    await move_forward_cm(-10.5, 200, 200)
+    await move_forward_cm(-11, 200, 200)
     await runloop.sleep_ms(10)
     #await move_forward_ds(13, 100, 100)
     #await runloop.sleep_ms(100)
 
-    await move_attachment_2(-200, 20000, 30000)
-    await move_attachment_2(100, 20000, 30000)
+    await move_attachment_2(-180, 10000, 10000)
+    await move_attachment_2(100, 10000, 10000)
     await runloop.sleep_ms(50)
 
     # Do Mission 8: Silo
-    for i in range(4):
+    for i in range(3):
         await move_attachment_2(-180, 1000, 30000)
         await runloop.sleep_ms(50)
         await move_attachment_2(180, 1000, 30000)
@@ -203,9 +206,10 @@ async def mission_a():
     await runloop.sleep_ms(100)
 
     # Do Mission 10: Tip the Scales
-    await move_attachment_2(-200)
-    await runloop.sleep_ms(100)
-    await move_forward_cm(-5)
+    runloop.run(
+        move_attachment_2(-200),
+        move_forward_cm(-5)
+    )
     await runloop.sleep_ms(200)
     await move_attachment_2(200)
     await runloop.sleep_ms(200)
@@ -217,10 +221,12 @@ async def mission_a():
     # Do Mission 9: What's on Sale
     await move_forward_cm(28, 600, 500)
     await runloop.sleep_ms(200)
+    await gyro_turn_absolute(130)
+    await move_forward_cm(5, 600, 500)
 
     # Return to Red Base
-    await gyro_turn_absolute(130)
     await runloop.sleep_ms(200)
+    await gyro_turn_absolute(130)
     await move_forward_cm(-50, 1000, 1000)
     await move_forward_cm(13)
     await gyro_turn_absolute(-160)
@@ -232,13 +238,14 @@ async def mission_a():
 
 
 # This mission is launched second from the red area
-async def mission_b():
+async def mission_c():
     hub.light_matrix.write(mission_name[current_mission])
-    # Add all code for Mission B here
+    # Add all code for Mission C here
 
 
     await move_attachment_2(180)
-    await move_forward_cm(33)
+    await move_forward_cm(32.5, 500, 500)
+    await gyro_turn_absolute(-1, 300)
     await move_attachment_2(-180)
     await move_forward_cm(-12, 100)
     await move_attachment_2(180)
@@ -268,12 +275,15 @@ async def mission_b():
 
 
 
-async def mission_c():
+async def mission_b():
     hub.light_matrix.write(mission_name[current_mission]) 
+    #Add all code for mission B here
 
     # Move to Mission 3: Mineshaft Explorer                   
-    await move_attachment_2(100, 100)
-    await move_forward_cm(65, 500, 500)
+    runloop.run(
+        move_attachment_2(100, 100),
+        move_forward_cm(65, 500, 500)
+    )
     await move_forward_ds(27, 200)
     await runloop.sleep_ms(50)
     await gyro_turn_absolute(90, 150)
@@ -283,16 +293,18 @@ async def mission_c():
     await move_forward_cm(-19, 200, 200)
     await runloop.sleep_ms(200)
     await gyro_turn_absolute(10, 50, 100)
-    await move_attachment_2(-180)
 
-    await move_forward_cm(11, 100)
+    runloop.run(
+        move_attachment_2(-180),
+        move_forward_cm(11, 100)
+    )
     await runloop.sleep_ms(200)
     await gyro_turn_absolute(10, 50, 100)
 
     # Do Mission 3: Mineshaft Explorer
-    await runloop.run_in_parallel(
+    runloop.run(
         move_attachment_2(180, 500),
-        move_forward_cm(-1, 100, 100)
+        move_forward_cm(-2, 100, 100)
     )
 
 
@@ -340,10 +352,30 @@ async def mission_e():
 
     hub.light_matrix.write(mission_name[current_mission])
 
+    # Go to Mission 10: Scale Pan
+    await move_attachment_1(-180)
+    await move_forward_cm(-3.5, 100, 100)
+    await gyro_turn_absolute(15, 100, 100)
+
+    # Pull Mission 10: Scale Pan
     await move_attachment_1(180)
-    await runloop.sleep_ms(1000)
+    await move_forward_cm(-2, 100, 100)
+    runloop.sleep_ms(100)
+    await move_forward_cm(-10, 100, 100)
     await move_attachment_1(-180)
 
+
+    
+    # Go to Mission 09: Wares
+    await move_forward_cm(7)
+    await gyro_turn_absolute(45)
+    await move_forward_cm(16, 200, 200)
+
+    await move_attachment_1(180)
+    await move_forward_cm(-5, 100, 100)
+    await runloop.sleep_ms(2000)
+    await move_forward_cm(1, 100, 100)
+    await move_attachment_1(-180)
 
     await runloop.sleep_ms(1000)
 
