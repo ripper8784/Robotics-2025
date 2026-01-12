@@ -156,10 +156,11 @@ async def mission_a():
         move_attachment_2(100, 100),
         move_forward_cm(63.5, 700, 500)
     )
+    await runloop.sleep_ms(100)
     await gyro_turn_absolute(90, 150)
     await move_forward_cm(10, 300, 300)
-    await runloop.sleep_ms(10)
-    await move_forward_cm(-10.5, 200, 200)
+    await runloop.sleep_ms(100)
+    await move_forward_cm(-10, 200, 200)
     await runloop.sleep_ms(10)
     await gyro_turn_absolute(90, 150)
     #await move_forward_ds(13, 100, 100)
@@ -181,7 +182,7 @@ async def mission_a():
     await move_forward_cm(1, 100, 100)
     await gyro_turn_absolute(10)
     runloop.run(
-        move_forward_cm(11),
+        move_forward_cm(10, 300, 300),
         move_attachment_2(130, 10000, 30000)
     )
 
@@ -206,7 +207,7 @@ async def mission_a():
     await move_forward_cm(22)
     await gyro_turn_absolute(-90)
     await move_forward_cm(19)
-    await gyro_turn_absolute(178)
+    await gyro_turn_absolute(-175)
 
     # Do Mission 10: Tip the Scales
     runloop.run(
@@ -233,7 +234,7 @@ async def mission_a():
     await move_forward_cm(13)
     await gyro_turn_absolute(-160)
     await move_forward_cm(57, 1000, 1000)
-    await gyro_turn_absolute(-100)
+    await gyro_turn_absolute(-110)
     await move_forward_cm(90, 1000, 1000)
 
 
@@ -328,13 +329,14 @@ async def mission_c():
 
     await gyro_turn_absolute(90)
     await move_attachment_2(130)
-    await move_forward_cm(35.5, 500, 500)
+    await move_forward_cm(36, 500, 500)
     await gyro_turn_absolute(89, 300)
     await move_attachment_2(-130)
     await move_forward_cm(-12, 100)
     await move_attachment_2(130)
     await gyro_turn_absolute(0)
     await move_forward_cm(15, 200)
+    await runloop.sleep_ms(100)
     await gyro_turn_absolute(93, 200)
     await move_forward_cm(35)
     await runloop.sleep_ms(500)
@@ -342,9 +344,9 @@ async def mission_c():
 
     await move_forward_cm(-30, 1000, 1000)
     await gyro_turn_absolute(50)
-    await move_forward_cm(48)
+    await move_forward_cm(48, 1000, 1000)
     await gyro_turn_absolute(115)
-    await move_forward_cm(120,1000)
+    await move_forward_cm(100, 1000, 1000)
 
 
 async def mission_d():
@@ -357,9 +359,13 @@ async def mission_d():
 
     await move_forward_cm(-42)
     await gyro_turn_absolute(0)
-    await move_forward_cm(70)
-    await move_forward_ds(14, 300, 300)
-    await move_attachment_1(150)
+    await move_forward_cm(67)
+    await move_forward_ds(12, 200, 200)
+    await runloop.sleep_ms(100)
+    runloop.run(
+        move_forward_cm(-2, 200, 200),
+        move_attachment_1(150)
+    )
     await gyro_turn_absolute(-45)
     await move_attachment_1(-150)
     await gyro_turn_absolute(0)
